@@ -4,11 +4,11 @@ import crypto from "crypto";
 
 const usersRouter = express.Router();
 
-usersRouter.post("/", async (req, res, next) => {
+usersRouter.post("/", (req, res, next) => {
   try {
     const { user_name, email, password } = req.body;
     const user_id = crypto.randomUUID();
-    const query = `INSERT INTO users (user_id, user_name, email, password) VALUES (?,?,?,?)`;
+    const query = "INSERT INTO users (user_id, user_name, email, password) VALUES (?,?,?,?)";
     const values = [user_id, user_name, email, password];
     connection.query(query, values, (err, result) => {
       if (err) {
