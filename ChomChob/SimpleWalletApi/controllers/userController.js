@@ -16,8 +16,9 @@ export const addUser = async (req, res, next) => {
     }
     const user_id = crypto.randomUUID();
     const hashedPassword = await bcryptHash(password);
-    const query = "INSERT INTO users (user_id, user_name, email, password) VALUES (?,?,?,?)";
-    const values = [user_id, user_name, email, hashedPassword];
+    const query = "INSERT INTO users (user_id, user_name, email, password, pwt) VALUES (?,?,?,?,?)";
+    const pwt = crypto.randomUUID();
+    const values = [user_id, user_name, email, hashedPassword, pwt];
     try {
       await connection.query(query, values);
       res.status(200).json({ message: "User inserted successfully" });

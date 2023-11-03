@@ -3,6 +3,7 @@ import mysql from "mysql";
 import mariadb from "mariadb";
 import "dotenv/config";
 import usersRouter from "./routers/usersRouter.js";
+import exchangeRouter from "./routers/exchangesRouter.js";
 const app = express();
 
 const pool = mariadb.createPool({
@@ -28,6 +29,7 @@ app.get("/", (req, res, next) => {
 });
 
 app.use("/users", usersRouter);
+app.use("/exchange", exchangeRouter);
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
