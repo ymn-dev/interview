@@ -1,7 +1,7 @@
 import { isValidEmail } from "../utils/validators.js";
 import crypto from "crypto";
-import { bcryptHash } from "../utils/encryption.js";
 import connection from "../server.js";
+import { bcryptHash } from "../utils/encryption.js";
 
 export const addUser = async (req, res, next) => {
   try {
