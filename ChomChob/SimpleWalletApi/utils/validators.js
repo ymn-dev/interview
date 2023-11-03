@@ -1,4 +1,4 @@
-import isEmail from "validator/lib/isEmail";
+import isEmail from "validator/lib/isEmail.js";
 
 export const isValidEmail = (email) => {
   const processedEmail = email.trim().toLowerCase();

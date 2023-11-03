@@ -1,28 +1,24 @@
 import express from "express";
 import mysql from "mysql";
+import mariadb from "mariadb";
 import "dotenv/config";
 import usersRouter from "./routers/usersRouter.js";
 const app = express();
 
-const connection = mysql.createConnection({
-  user: process.env.DATABASE_ID,
-  password: process.env.DATABASE_PASSWORD,
-  database: "chomchob",
-  host: "localhost",
+const pool = mariadb.createPool({
+  host: process.env.MARIA_HOST,
+  user: process.env.MARIA_USER,
+  password: process.env.MARIA_PASSWORD,
+  database: process.env.DATABASE_NAME,
+  connectionLimit: 5,
 });
 
-const connectionLoop = async () => {
-  connection.connect((err) => {
-    if (err) {
-      console.log(`Error connecting to database: ${err}`);
-      setTimeout(connectionLoop, 5000);
-    } else {
-      console.log("Successfully connected to the database");
-    }
+const connection = await pool
+  .getConnection()
+  .then(console.log("Successfully connected to the database"))
+  .catch((err) => {
+    console.log(`Error connecting to database: ${err}`);
   });
-};
-
-connectionLoop();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
