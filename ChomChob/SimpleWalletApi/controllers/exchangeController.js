@@ -1,17 +1,18 @@
 import crypto from "crypto";
 import connection from "../server.js";
 
-export const seeExchangeRate = async (req, res, next) => {
+export const getExchangeRates = async (req, res, next) => {
   const query = `
   SELECT
     e.id,
-    c1.currency_code AS from_currency_code,
-    c2.currency_code AS to_currency_code,
+    c1.currency_id AS from_currency,
+    c2.currency_id AS to_currency,
     e.rate,
     e.available
   FROM exchange_rate e
   JOIN currencies c1 ON e.from_currency = c1.currency_id
   JOIN currencies c2 ON e.to_currency = c2.currency_id
+  WHERE e.available = TRUE
   ORDER BY 1 ASC;`;
   try {
     const result = await connection.query(query);
@@ -21,4 +22,8 @@ export const seeExchangeRate = async (req, res, next) => {
   } finally {
     connection.release();
   }
+};
+
+export const addExchangeRate = async (req, res, next) => {
+  const query = `INSERT INTO exchange_rate `;
 };
