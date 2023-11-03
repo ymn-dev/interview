@@ -32,4 +32,22 @@ export const addUser = async (req, res, next) => {
   }
 };
 
-export const getAllUsers = async (req, res, next) => {};
+export const getAllUsers = async (req, res, next) => {
+  try {
+    const getAllColumns = "DESCRIBE users";
+    let allColumns = [];
+    const table = await connection.query(getAllColumns);
+    table.forEach((column) => {
+      allColumns.push(column.Field);
+    });
+    const noPassword = allColumns.filter((col) => col !== "password").join(", ");
+    const query = `SELECT ${noPassword} from users`;
+    const result = await connection.query(query);
+
+    res.status(200).json({ data: result });
+  } catch (err) {
+    res.status(400).json({ error: err.sqlMessage });
+  } finally {
+    connection.release();
+  }
+};
