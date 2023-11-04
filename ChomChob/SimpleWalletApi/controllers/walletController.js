@@ -3,7 +3,7 @@ import crypto from "crypto";
 
 export const adminAddMoney = async (req, res, next) => {
   const { wallet_id, user_id, currency_id, amount } = req.body;
-  if (wallet_id && amount) {
+  if (wallet_id && amount && !user_id && !currency_id) {
     const query = `UPDATE wallet SET balance = balance + ? WHERE wallet_id = ?`;
     const value = [Number(amount), wallet_id];
     try {
@@ -14,10 +14,10 @@ export const adminAddMoney = async (req, res, next) => {
     } finally {
       connection.release();
     }
-  } else {
+  } else if (!wallet_id && currency_id && user_id) {
     const newWalletId = crypto.randomUUID();
     const query = `INSERT into wallet (wallet_id, user_id, currency_id, balance) VALUES (?, ?, ?, ?)`;
-    const value = [newWalletId, user_id, Number(currency_id), Number(amount)];
+    const value = [newWalletId, user_id, Number(currency_id), amount ? Number(amount) : 0];
     try {
       await connection.query(query, value);
       res.json({ message: `Successfully created the wallet ${newWalletId}` });

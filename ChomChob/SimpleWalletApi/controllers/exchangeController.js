@@ -10,7 +10,7 @@ export const getExchangeRates = async (req, res, next) => {
     e.rate,
     CASE
         WHEN e.available = 1 THEN "TRUE"
-        ELSE "FALSE"
+        ELSE "AVAILABLE SOON"
     END AS available
   FROM exchange_rate e
   JOIN currency c1 ON e.from_currency = c1.currency_id
@@ -26,24 +26,23 @@ export const getExchangeRates = async (req, res, next) => {
   }
 };
 
+/*depreciated because automated
 export const addExchangeRate = async (req, res, next) => {
   const { from_currency, to_currency, rate, available } = req.body;
+  const query = `INSERT INTO exchange_rate (from_currency, to_currency,rate,available) VALUES (?, ?, ?, ?);`;
+  let availability;
+  if (available.toLowerCase() === "true" || available == 1) availability = 1;
+  if (available.toLowerCase() === "false" || available == 0 || !available) availability = 0;
+  const value = [from_currency, to_currency, rate, availability];
   try {
-    const checkExchangeExists = `SELECT * from exchange_rate`;
-    const records = await connection.query(checkExchangeExists);
-    const exist = records.filter((record) => record.from_currency === from_currency && record.to_currency === to_currency);
-    if (exist.length > 0) {
-      res.status(400).json({ error: "This exchange already exist" });
-      return;
-    }
-    const query = `INSERT INTO exchange_rate (from_currency, to_currency, rate, available) VALUES (?,?,?,?)`;
-    const booleanAvailable = available === "false" ? false : true;
-    const values = [from_currency, to_currency, rate, booleanAvailable];
-    await connection.query(query, values);
+    await connection.query(query, value);
     res.status(200).json({ message: "Added new exchange successfully" });
   } catch (err) {
-    res.status(400).json({ error: err });
+    res.status(400).json({ error: err.sqlMessage });
   } finally {
     connection.release();
   }
 };
+*/
+
+export const modifyExchangeRate = async (req, res, next) => {};
