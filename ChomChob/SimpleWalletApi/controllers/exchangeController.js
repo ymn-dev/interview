@@ -5,14 +5,16 @@ export const getExchangeRates = async (req, res, next) => {
   const query = `
   SELECT
     e.id,
-    c1.currency_id AS from_currency,
-    c2.currency_id AS to_currency,
+    c1.abbreviation AS from_currency,
+    c2.abbreviation AS to_currency,
     e.rate,
-    e.available
+    CASE
+        WHEN e.available = 1 THEN "TRUE"
+        ELSE "FALSE"
+    END AS available
   FROM exchange_rate e
-  JOIN currencies c1 ON e.from_currency = c1.currency_id
-  JOIN currencies c2 ON e.to_currency = c2.currency_id
-  WHERE e.available = TRUE
+  JOIN currency c1 ON e.from_currency = c1.currency_id
+  JOIN currency c2 ON e.to_currency = c2.currency_id
   ORDER BY 1 ASC;`;
   try {
     const result = await connection.query(query);

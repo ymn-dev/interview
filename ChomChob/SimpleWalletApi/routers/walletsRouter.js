@@ -1,7 +1,8 @@
 import express from "express";
-import { adminAddToWallet } from "../controllers/walletController.js";
+import { adminAddMoney, walletTransaction } from "../controllers/walletController.js";
 const walletsRouter = express.Router();
 
-walletsRouter.post("/adminAdd", adminAddToWallet);
+walletsRouter.post("/adminAdd", adminAddMoney);
+walletsRouter.post("/transfer", walletTransaction);
 
 export default walletsRouter;

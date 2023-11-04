@@ -16,7 +16,7 @@ export const addUser = async (req, res, next) => {
     }
     const user_id = crypto.randomUUID();
     const hashedPassword = await bcryptHash(password);
-    const query = "INSERT INTO users (user_id, user_name, email, password, pwt) VALUES (?,?,?,?,?)";
+    const query = "INSERT INTO user (user_id, user_name, email, password, pwt) VALUES (?,?,?,?,?)";
     const pwt = crypto.randomUUID();
     const values = [user_id, user_name, email, hashedPassword, pwt];
     try {
@@ -34,18 +34,19 @@ export const addUser = async (req, res, next) => {
 };
 
 export const getAllUsers = async (req, res, next) => {
+  const { perPage, page } = req.body;
   try {
-    const getAllColumns = "DESCRIBE users";
-    let allColumns = [];
-    const table = await connection.query(getAllColumns);
-    table.forEach((column) => {
-      allColumns.push(column.Field);
-    });
-    const noPassword = allColumns.filter((col) => col !== "password").join(", ");
-    const query = `SELECT ${noPassword} from users`;
-    const result = await connection.query(query);
-
-    res.status(200).json({ data: result });
+    const getAllUsersWithWallets = `
+    SELECT user.user_id, w.wallet_id, w.balance, c.abbreviation as currency
+    FROM user
+    JOIN wallet w ON user.user_id = w.user_id
+    JOIN currency c ON w.currency_id = c.currency_id
+    LIMIT ?
+    OFFSET ?
+    `;
+    const pagination = [Number(perPage), Number(perPage) * Number(page - 1)];
+    const table = await connection.query(getAllUsersWithWallets, pagination);
+    res.json({ data: table });
   } catch (err) {
     res.status(400).json({ error: err.sqlMessage });
   } finally {
