@@ -37,13 +37,17 @@ export const getAllUsers = async (req, res, next) => {
   const { perPage, page } = req.body;
   try {
     const getAllUsersWithWallets = `
-    SELECT user.user_id, w.wallet_id, w.balance, c.abbreviation as currency
+    SELECT limit_by_user.user_id, c.abbreviation as currency, w.balance, w.wallet_id
+    FROM (
+    SELECT DISTINCT user_id
     FROM user
-    JOIN wallet w ON user.user_id = w.user_id
-    JOIN currency c ON w.currency_id = c.currency_id
-    LIMIT ?
-    OFFSET ?
-    `;
+    LIMIT 20
+    OFFSET 0
+    ) AS limit_by_user 
+    JOIN wallet w ON limit_by_user.user_id = w.user_id
+    JOIN currency c ON w.currency_id = c.currency_id;
+`;
+
     const pagination = [Number(perPage), Number(perPage) * Number(page - 1)];
     const table = await connection.query(getAllUsersWithWallets, pagination);
     res.json({ data: table });
