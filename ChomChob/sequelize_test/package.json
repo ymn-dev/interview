@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "mariadb": "^3.2.2",
+    "sequelize": "^6.34.0"
+  }
+}
