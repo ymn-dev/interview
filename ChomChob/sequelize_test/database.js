@@ -167,9 +167,18 @@ Bundle_Date.belongsTo(Bundle, {
   foreignKey: "bundle_id",
 });
 
+const Bundle_Promotion = sequelize.define("Bundle_Promotion", {});
+
+Bundle.belongsToMany(Promotion, {
+  through: Bundle_Promotion,
+});
+Promotion.belongsToMany(Bundle, {
+  through: Bundle_Promotion,
+});
+
 const Code = sequelize.define("Code", {
   code_id: {
-    type: DataTypes.STRING,
+    type: DataTypes.CHAR(36), //uuidv4 for mariadb
     primaryKey: true,
   },
   used: {
