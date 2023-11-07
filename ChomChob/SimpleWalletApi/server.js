@@ -1,11 +1,12 @@
 import express from "express";
-import mysql from "mysql";
 import mariadb from "mariadb";
 import "dotenv/config";
 import usersRouter from "./routers/usersRouter.js";
 import exchangeRouter from "./routers/exchangesRouter.js";
 import walletsRouter from "./routers/walletsRouter.js";
 import currenciesRouter from "./routers/currenciesRouter.js";
+import loginRouter from "./routers/loginRouter.js";
+
 const app = express();
 
 const pool = mariadb.createPool({
@@ -25,6 +26,8 @@ const connection = await pool
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.use("/login", loginRouter);
+
 app.get("/", (req, res, next) => {
   res.json({ message: `the server is up` });
   next();
@@ -40,4 +43,4 @@ app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
 
-export default connection;
+export { connection };

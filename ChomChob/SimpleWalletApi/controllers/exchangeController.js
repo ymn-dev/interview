@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import connection from "../server.js";
+import { connection } from "../server.js";
 
 export const getExchangeRates = async (req, res, next) => {
   const query = `
@@ -29,6 +29,10 @@ export const getExchangeRates = async (req, res, next) => {
 /*depreciated because automated in add currency already*/
 export const addExchangeRate = async (req, res, next) => {
   const { from_currency, to_currency, rate, available } = req.body;
+  if (rate < 0) {
+    res.status(400).json({ error: "Rate cannot be lower than 0" });
+    return;
+  }
   const query = `INSERT INTO exchange_rate (from_currency, to_currency,rate,available) VALUES (?, ?, ?, ?);`;
   let availability;
   if (available.toLowerCase() === "true" || available == 1) availability = 1;
@@ -46,6 +50,10 @@ export const addExchangeRate = async (req, res, next) => {
 
 export const modifyExchangeRate = async (req, res, next) => {
   const { exchange_id, rate, available } = req.body;
+  if (rate < 0) {
+    res.status(400).json({ error: "Rate cannot be lower than 0" });
+    return;
+  }
   const query = `UPDATE exchange_rate SET rate = ?, available = ? WHERE id = ?`;
   let availability;
   if (available.toLowerCase() === "true" || available == 1) availability = 1;

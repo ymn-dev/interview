@@ -1,6 +1,6 @@
 import { isValidEmail } from "../utils/validators.js";
 import crypto from "crypto";
-import connection from "../server.js";
+import { connection } from "../server.js";
 import { bcryptHash } from "../utils/encryption.js";
 
 export const addUser = async (req, res, next) => {
@@ -45,7 +45,8 @@ export const getAllUsers = async (req, res, next) => {
     OFFSET 0
     ) AS limit_by_user 
     JOIN wallet w ON limit_by_user.user_id = w.user_id
-    JOIN currency c ON w.currency_id = c.currency_id;
+    JOIN currency c ON w.currency_id = c.currency_id
+    GROUP BY 1, 2;
 `;
 
     const pagination = [Number(perPage), Number(perPage) * Number(page - 1)];

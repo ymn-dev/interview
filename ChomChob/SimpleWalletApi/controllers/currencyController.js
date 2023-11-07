@@ -1,4 +1,4 @@
-import connection from "../server.js";
+import { connection } from "../server.js";
 
 export const getAllCurrencies = async (req, res, next) => {
   const query = `SELECT * from currency`;
@@ -29,11 +29,34 @@ export const addCurrency = async (req, res, next) => {
     await connection.query(addExchangeRate);
     res.json({ message: `Successfully added a new currency: ${name}(${abbreviation})` });
   } catch (err) {
-    res.status(400).json({ error: err });
-    console.log(err);
+    res.status(400).json({ error: err.sqlMessage });
   } finally {
     connection.release();
   }
 };
 
-export const editCurrency = async (req, res, next) => {};
+export const editCurrency = async (req, res, next) => {
+  const { currency_id, abbreviation, name } = req.body;
+  const query = `UPDATE currency SET abbreviation = ?, name = ? WHERE currency_id = ? ;`;
+  try {
+    await connection.query(query, [abbreviation, name, currency_id]);
+    res.json({ message: "Successfully edited the currency" });
+  } catch (err) {
+    res.status(400).json({ error: err.sqlMessage });
+  } finally {
+    connection.release();
+  }
+};
+
+export const deleteCurrency = async (req, res, next) => {
+  const { currency_id } = req.body;
+  const query = `DELETE FROM currency WHERE currency_id = ?`;
+  try {
+    await connection.query(query, [currency_id]);
+    res.json({ message: "Successfully deleted the currency" });
+  } catch (err) {
+    res.status(400).json({ error: sqlMessage });
+  } finally {
+    connection.release();
+  }
+};

@@ -1,4 +1,4 @@
-import connection from "../server.js";
+import { connection } from "../server.js";
 import crypto from "crypto";
 
 export const adminAddMoney = async (req, res, next) => {
@@ -26,6 +26,8 @@ export const adminAddMoney = async (req, res, next) => {
     } finally {
       connection.release();
     }
+  } else {
+    res.status(400).json({ error: "either send 'wallet_id + amount' for existing wallet or 'user_id + currency_id + amount(optional)' to create new wallet" });
   }
 };
 

@@ -5,5 +5,5 @@ export const bcryptHash = async (str, saltRound = 12) => {
 };
 
 export const bcryptCompare = async (myStr, hashedStr) => {
-  return await bcrypt.compare(str, hashedStr);
+  return await bcrypt.compare(myStr, hashedStr);
 };
