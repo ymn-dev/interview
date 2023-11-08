@@ -51,8 +51,9 @@ export const walletTransaction = async (req, res, next) => {
     if (payerWallet[0].user_id !== req.id) {
       return res.status(403).json({ error: "You don't have access to this wallet" });
     }
-    const getExchangeRateQuery = `SELECT * FROM exchange_rate where from_currency = ? AND to_currency = ?`;
+    const getExchangeRateQuery = `SELECT * FROM exchange_rate where from_currency = ? AND to_currency = ? AND available = 1`;
     const getExchangeRate = await connection.query(getExchangeRateQuery, [payerWallet[0].currency_id, Number(to_currency)]);
+    if (getExchangeRate.length === 0) return res.status(400).json({ error: "This exchange isn't available yet" });
     const exchangeRate = getExchangeRate.length > 0 ? Number(getExchangeRate[0].rate) : 1;
     const transferAmount = Number(amount) * exchangeRate;
     if (transferAmount > payerBalance * exchangeRate) {
