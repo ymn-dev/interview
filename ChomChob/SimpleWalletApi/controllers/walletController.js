@@ -15,6 +15,7 @@ export const adminAddMoney = async (req, res, next) => {
       connection.release();
     }
   } else if (!wallet_id && currency_id && user_id) {
+    if (Number(amount < 0)) return res.status(400).json({ error: "Can't create a wallet with minus balance" });
     const newWalletId = crypto.randomUUID();
     const query = `INSERT into wallet (wallet_id, user_id, currency_id, balance) VALUES (?, ?, ?, ?)`;
     const value = [newWalletId, user_id, Number(currency_id), amount ? Number(amount) : 0];
