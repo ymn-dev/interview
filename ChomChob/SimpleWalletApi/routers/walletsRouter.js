@@ -4,6 +4,6 @@ import { isAdmin, authentication } from "../utils/middlewares.js";
 const walletsRouter = express.Router();
 
 walletsRouter.post("/adminAdd", authentication, isAdmin, adminAddMoney);
-walletsRouter.post("/transfer", walletTransaction);
+walletsRouter.post("/transfer", authentication, walletTransaction);
 
 export default walletsRouter;

@@ -47,6 +47,9 @@ export const walletTransaction = async (req, res, next) => {
         return;
       }
     }
+    if (payerWallet[0].user_id !== req.id) {
+      return res.status(403).json({ error: "You don't have access to this wallet" });
+    }
     const getExchangeRateQuery = `SELECT * FROM exchange_rate where from_currency = ? AND to_currency = ?`;
     const getExchangeRate = await connection.query(getExchangeRateQuery, [payerWallet[0].currency_id, Number(to_currency)]);
     const exchangeRate = getExchangeRate.length > 0 ? Number(getExchangeRate[0].rate) : 1;

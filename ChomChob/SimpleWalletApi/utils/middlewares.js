@@ -25,13 +25,6 @@ export const authentication = (req, res, next) => {
   }
 };
 
-export const authorization = (req, res, next) => {
-  const decoded = verifyToken(req, res, next);
-  if (decoded.user_id === req.id) {
-    next();
-  }
-};
-
 export const isAdmin = (req, res, next) => {
   if (req.id === process.env.ADMIN_ID) {
     return next();
